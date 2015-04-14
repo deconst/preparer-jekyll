@@ -1,5 +1,3 @@
-puts "This file was required"
-
 module PreparerMD
 
   # Generator plugin to construct JSON metadata envelopes.
@@ -14,12 +12,24 @@ module PreparerMD
 
 end
 
-# Disable everyone else's generator plugins because screw those things.
-#
 module Jekyll
+
+  # Disable everyone else's generator plugins because screw those things.
+  #
   class Generator < Plugin
     def self.descendants
       [PreparerMD::JSONGenerator]
     end
   end
+
+  # Don't actually render the page because why would we want to do that
+  #
+  class Site
+    def render
+    end
+
+    def write
+    end
+  end
+
 end
