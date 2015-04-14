@@ -5,7 +5,7 @@ require 'preparermd/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "preparermd"
-  spec.version       = Preparermd::VERSION
+  spec.version       = PreparerMD::VERSION
   spec.authors       = ["Ash Wilson"]
   spec.email         = ["smashwilson@gmail.com"]
 

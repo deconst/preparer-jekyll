@@ -1,3 +1,3 @@
-module Preparermd
+module PreparerMD
   VERSION = "0.1.0"
 end
