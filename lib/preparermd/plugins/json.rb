@@ -1,3 +1,6 @@
+require 'json'
+require 'jekyll'
+
 module PreparerMD
 
   # Generator plugin to construct JSON metadata envelopes.
@@ -5,7 +8,31 @@ module PreparerMD
   class JSONGenerator < Jekyll::Generator
 
     def generate(site)
-      puts "Hooray, I ran"
+      site.posts.each do |post|
+        render_json(post, site)
+      end
+
+      site.pages.each do |page|
+        render_json(page, site)
+      end
+    end
+
+    def render_json(page, site)
+      path = page.destination(site.dest)
+
+      return unless path =~ /\/index\.html$/
+
+      path["/index.html"] = ".json"
+
+      page.data["layout"] = nil
+      page.render({}, site.site_payload)
+
+      output = page.to_liquid
+      output["next"] = output["next"].id if output["next"]
+      output["previous"] = output["previous"].id if output["previous"]
+
+      FileUtils.mkdir_p(File.dirname(path))
+      File.open(path, 'w') { |f| f.write(output.to_json) }
     end
 
   end
@@ -29,6 +56,9 @@ module Jekyll
     end
 
     def write
+    end
+
+    def cleanup
     end
   end
 
