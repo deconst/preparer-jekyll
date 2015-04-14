@@ -28,11 +28,14 @@ module PreparerMD
       page.render({}, site.site_payload)
 
       output = page.to_liquid
-      output["next"] = output["next"].id if output["next"]
-      output["previous"] = output["previous"].id if output["previous"]
+
+      envelope = {
+        title: output["title"],
+        body: output["content"]
+      }
 
       FileUtils.mkdir_p(File.dirname(path))
-      File.open(path, 'w') { |f| f.write(output.to_json) }
+      File.open(path, 'w') { |f| f.write(envelope.to_json) }
     end
 
   end
