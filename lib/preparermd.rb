@@ -1,5 +1,5 @@
 require "preparermd/version"
 
-module Preparermd
+module PreparerMD
   # Your code goes here...
 end
