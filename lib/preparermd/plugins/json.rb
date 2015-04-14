@@ -20,9 +20,13 @@ module PreparerMD
     def render_json(page, site)
       path = page.destination(site.dest)
 
-      return unless path =~ /\/index\.html$/
+      return unless path =~ %r{/index\.html$}
 
-      path["/index.html"] = ".json"
+      if path =~ %r{#{site.dest}/index\.html$}
+        path[".html"] = ".json"
+      else
+        path["/index.html"] = ".json"
+      end
 
       page.data["layout"] = nil
       page.render({}, site.site_payload)
