@@ -18,16 +18,6 @@ module PreparerMD
     end
 
     def render_json(page, site)
-      path = page.destination(site.dest)
-
-      return unless path =~ %r{/index\.html$}
-
-      if path =~ %r{#{site.dest}/index\.html$}
-        path[".html"] = ".json"
-      else
-        path["/index.html"] = ".json"
-      end
-
       page.data["layout"] = nil
       page.render({}, site.site_payload)
 
@@ -38,8 +28,19 @@ module PreparerMD
         body: output["content"]
       }
 
-      FileUtils.mkdir_p(File.dirname(path))
-      File.open(path, 'w') { |f| f.write(envelope.to_json) }
+      if PreparerMD.config.should_submit?
+        base = PreparerMD.config.content_id_base
+
+        content_id = File.join(base, Jekyll::URL.unescape_path(page.url))
+        content_id.gsub! %r{/index\.html\Z}, ""
+
+        puts "Submitting envelope: [#{content_id}]"
+      else
+        path = page.destination(site.dest)
+
+        FileUtils.mkdir_p(File.dirname(path))
+        File.open(path, 'w') { |f| f.write(envelope.to_json) }
+      end
     end
 
   end
