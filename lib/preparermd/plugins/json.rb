@@ -1,5 +1,6 @@
 require 'json'
 require 'jekyll'
+require 'faraday'
 
 module PreparerMD
 
@@ -8,6 +9,10 @@ module PreparerMD
   class JSONGenerator < Jekyll::Generator
 
     def generate(site)
+      if PreparerMD.config.should_submit?
+        @conn = Faraday.new(url: PreparerMD.config.content_store_url)
+      end
+
       site.posts.each do |post|
         render_json(post, site)
       end
@@ -18,16 +23,6 @@ module PreparerMD
     end
 
     def render_json(page, site)
-      path = page.destination(site.dest)
-
-      return unless path =~ %r{/index\.html$}
-
-      if path =~ %r{#{site.dest}/index\.html$}
-        path[".html"] = ".json"
-      else
-        path["/index.html"] = ".json"
-      end
-
       page.data["layout"] = nil
       page.render({}, site.site_payload)
 
@@ -38,8 +33,33 @@ module PreparerMD
         body: output["content"]
       }
 
-      FileUtils.mkdir_p(File.dirname(path))
-      File.open(path, 'w') { |f| f.write(envelope.to_json) }
+      if PreparerMD.config.should_submit?
+        base = PreparerMD.config.content_id_base
+
+        content_id = File.join(base, Jekyll::URL.unescape_path(page.url))
+        content_id.gsub! %r{/index\.html\Z}, ""
+
+        puts "Submitting envelope: [#{content_id}]"
+
+        @conn.put do |req|
+          req.url "/content/#{CGI.escape content_id}"
+          req.headers['Content-Type'] = 'application/json'
+          req.body = envelope.to_json
+        end
+      else
+        path = page.destination(site.dest)
+
+        if path == File.join(site.dest, "index.html")
+          path = File.join(site.dest, "index.json")
+        else
+          path.gsub! %r{/index\.html\Z}, ".json"
+        end
+
+        puts "Writing envelope to [#{path}]"
+
+        FileUtils.mkdir_p(File.dirname(path))
+        File.open(path, 'w') { |f| f.write(envelope.to_json) }
+      end
     end
 
   end

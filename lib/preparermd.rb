@@ -1,6 +1,7 @@
 require "jekyll"
 
 require "preparermd/version"
+require "preparermd/config"
 require "preparermd/plugins/json"
 
 module PreparerMD
@@ -8,9 +9,16 @@ module PreparerMD
   # Primary entry point for the site build. Execute a Jekyll build with customized options.
   #
   def self.build
-    opts = {}
+    @config = Config.new
+    @config.validate
 
-    Jekyll::Commands::Build.process(opts)
+    Jekyll::Commands::Build.process({})
+  end
+
+  # Access the preparer's configuration.
+  #
+  def self.config
+    @config
   end
 
 end

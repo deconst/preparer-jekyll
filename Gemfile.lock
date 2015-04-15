@@ -2,6 +2,7 @@ PATH
   remote: .
   specs:
     preparermd (0.1.0)
+      faraday (~> 0.9.1)
       jekyll (~> 2.5)
 
 GEM
@@ -19,6 +20,8 @@ GEM
     coffee-script-source (1.9.1.1)
     colorator (0.1)
     execjs (2.5.2)
+    faraday (0.9.1)
+      multipart-post (>= 1.2, < 3)
     fast-stemmer (1.0.2)
     ffi (1.9.8)
     hitimes (1.2.2)
@@ -53,6 +56,7 @@ GEM
       rb-inotify (>= 0.9)
     mercenary (0.3.5)
     method_source (0.8.2)
+    multipart-post (2.0.0)
     parslet (1.5.0)
       blankslate (~> 2.0)
     posix-spawn (0.3.11)
