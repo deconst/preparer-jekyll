@@ -2,7 +2,7 @@ require "jekyll"
 
 require "preparermd/version"
 require "preparermd/config"
-require "preparermd/plugins/json"
+require "preparermd/plugins/metadata_envelopes"
 
 module PreparerMD
 
