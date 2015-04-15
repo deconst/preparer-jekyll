@@ -48,7 +48,14 @@ module PreparerMD
         end
       else
         path = page.destination(site.dest)
-        path["/index.json"] = ""
+
+        if path == File.join(site.dest, "index.html")
+          path = File.join(site.dest, "index.json")
+        else
+          path.gsub! %r{/index\.html\Z}, ".json"
+        end
+
+        puts "Writing envelope to [#{path}]"
 
         FileUtils.mkdir_p(File.dirname(path))
         File.open(path, 'w') { |f| f.write(envelope.to_json) }
