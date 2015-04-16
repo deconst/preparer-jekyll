@@ -6,8 +6,10 @@ require 'jekyll/assets_plugin/environment'
 
 # Module to be mixed in to each uploaded Asset to ensure that the correct URLs are generated.
 #
-module AssetPatch
-  attr_accessor :asset_cdn_url
+module PreparerMD
+  module AssetPatch
+    attr_accessor :asset_cdn_url
+  end
 end
 
 # Custom Index subclass that uploads each built asset to the content service as it is discovered.
@@ -25,19 +27,23 @@ class Index < Sprockets::Index
   end
 
   def build_asset(path, pathname, options)
-    super.tap do |asset|
-      asset.pathname.open do |f|
-        response = @conn.post '/assets', {
-          asset.logical_path => Faraday::UploadIO.new(f, asset.content_type, asset.logical_path)
-        }
+    if PreparerMD.config.should_submit?
+      super.tap do |asset|
+        asset.pathname.open do |f|
+          response = @conn.post '/assets', {
+            asset.logical_path => Faraday::UploadIO.new(f, asset.content_type, asset.logical_path)
+          }
 
-        asset_url = JSON.parse(response.body)[File.basename asset.logical_path]
+          asset_url = JSON.parse(response.body)[File.basename asset.logical_path]
 
-        asset.extend AssetPatch
-        asset.asset_cdn_url = asset_url
+          asset.extend PreparerMD::AssetPatch
+          asset.asset_cdn_url = asset_url
 
-        puts "Submitted content asset: [#{asset.logical_path}]"
+          puts "Submitted content asset: [#{asset.logical_path}]"
+        end
       end
+    else
+      super
     end
   end
 end
@@ -57,7 +63,7 @@ module Jekyll
 
     class AssetPath
       def to_s
-        @asset.asset_cdn_url
+        @asset.instance_of?(PreparerMD::AssetPatch) ? @asset.asset_cdn_url : super
       end
     end
 
