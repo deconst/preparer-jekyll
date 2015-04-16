@@ -62,8 +62,9 @@ module Jekyll
   module AssetsPlugin
 
     class AssetPath
+      alias_method :orig_to_s, :to_s
       def to_s
-        @asset.instance_of?(PreparerMD::AssetPatch) ? @asset.asset_cdn_url : super
+        @asset.respond_to?(:asset_cdn_url) ? @asset.asset_cdn_url : orig_to_s
       end
     end
 
