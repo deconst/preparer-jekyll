@@ -1,8 +1,10 @@
 require "jekyll"
+require "jekyll-assets"
 
 require "preparermd/version"
 require "preparermd/config"
-require "preparermd/lock_jekyll"
+require "preparermd/overrides/jekyll"
+require "preparermd/overrides/environment"
 require "preparermd/plugins/metadata_envelopes"
 
 module PreparerMD
