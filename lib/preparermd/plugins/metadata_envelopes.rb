@@ -39,13 +39,13 @@ module PreparerMD
         content_id = File.join(base, Jekyll::URL.unescape_path(page.url))
         content_id.gsub! %r{/index\.html\Z}, ""
 
-        puts "Submitting envelope: [#{content_id}]"
-
         @conn.put do |req|
           req.url "/content/#{CGI.escape content_id}"
           req.headers['Content-Type'] = 'application/json'
           req.body = envelope.to_json
         end
+
+        puts "Submitted envelope: [#{content_id}]"
       else
         path = page.destination(site.dest)
 
@@ -62,31 +62,6 @@ module PreparerMD
       end
     end
 
-  end
-
-end
-
-module Jekyll
-
-  # Disable everyone else's generator plugins because screw those things.
-  #
-  class Generator < Plugin
-    def self.descendants
-      [PreparerMD::JSONGenerator]
-    end
-  end
-
-  # Don't actually render the page because why would we want to do that
-  #
-  class Site
-    def render
-    end
-
-    def write
-    end
-
-    def cleanup
-    end
   end
 
 end
