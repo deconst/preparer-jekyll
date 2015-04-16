@@ -33,7 +33,7 @@ module PreparerMD
       envelope = {
         title: output["title"],
         body: output["content"],
-        layout: layout,
+        layout_key: layout,
       }
 
       if PreparerMD.config.should_submit?
