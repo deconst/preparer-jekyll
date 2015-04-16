@@ -23,6 +23,8 @@ module PreparerMD
     end
 
     def render_json(page, site)
+      layout = page.data["deconst-layout"] || page.data["layout"]
+
       page.data["layout"] = nil
       page.render({}, site.site_payload)
 
@@ -30,7 +32,8 @@ module PreparerMD
 
       envelope = {
         title: output["title"],
-        body: output["content"]
+        body: output["content"],
+        layout_key: layout,
       }
 
       if PreparerMD.config.should_submit?
