@@ -31,4 +31,5 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "jekyll", "2.5.3"
   spec.add_runtime_dependency "faraday", "0.9.1"
   spec.add_runtime_dependency "jekyll-assets", "0.14.0"
+  spec.add_runtime_dependency "therubyracer", "0.12.2"
 end
