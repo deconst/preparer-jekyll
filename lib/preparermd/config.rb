@@ -3,13 +3,14 @@ module PreparerMD
   # Configuration values and credentials read from the process' environment.
   #
   class Config
-    attr_reader :content_store_url, :content_id_base
+    attr_reader :content_store_url, :content_store_apikey, :content_id_base
 
 
     # Create a new configuration populated with values from the environment.
     #
     def initialize
       @content_store_url = ENV.fetch('CONTENT_STORE_URL', '').gsub(%r{/\Z}, '')
+      @content_store_apikey = ENV['CONTENT_STORE_APIKEY']
       @content_id_base = ENV.fetch('CONTENT_ID_BASE', '').gsub(%r{/\Z}, '')
     end
 
@@ -22,6 +23,11 @@ module PreparerMD
       if @content_store_url.empty?
         reasons << "CONTENT_STORE_URL is missing. It should be the base URL of the content " \
           "storage service."
+      end
+
+      if @content_store_apikey.empty?
+        reasons << "CONTENT_STORE_APIKEY is missing. It should be a valid API key issued by the " \
+          "content service."
       end
 
       if @content_id_base.empty?

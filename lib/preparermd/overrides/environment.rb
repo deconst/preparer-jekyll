@@ -27,12 +27,18 @@ class Index < Sprockets::Index
   end
 
   def build_asset(path, pathname, options)
+    auth = "deconst apikey=\"#{PreparerMD.config.content_store_apikey}\""
+
     if PreparerMD.config.should_submit?
       super.tap do |asset|
         asset.pathname.open do |f|
-          response = @conn.post '/assets', {
-            asset.logical_path => Faraday::UploadIO.new(f, asset.content_type, asset.logical_path)
-          }
+          response = @conn.post do |req|
+            req.url '/assets'
+            req.headers['Authorization'] = auth
+            req.body = {
+              asset.logical_path => Faraday::UploadIO.new(f, asset.content_type, asset.logical_path)
+            }
+          end
 
           asset_url = JSON.parse(response.body)[File.basename asset.logical_path]
 
