@@ -42,13 +42,15 @@ module PreparerMD
 
       if PreparerMD.config.should_submit?
         base = PreparerMD.config.content_id_base
+        auth = "deconst apikey=\"#{PreparerMD.config.content_store_apikey}\""
 
         content_id = File.join(base, Jekyll::URL.unescape_path(page.url))
         content_id.gsub! %r{/index\.html\Z}, ""
 
-        @conn.put do |req|
+        resp = @conn.put do |req|
           req.url "/content/#{CGI.escape content_id}"
           req.headers['Content-Type'] = 'application/json'
+          req.headers['Authorization'] = auth
           req.body = envelope.to_json
         end
 
