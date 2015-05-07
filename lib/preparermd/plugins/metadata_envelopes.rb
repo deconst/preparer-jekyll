@@ -10,7 +10,11 @@ module PreparerMD
 
     def generate(site)
       if PreparerMD.config.should_submit?
-        @conn = Faraday.new(url: PreparerMD.config.content_store_url)
+        @conn = Faraday.new(url: PreparerMD.config.content_store_url) do |conn|
+          conn.response :raise_error
+
+          conn.adapter Faraday.default_adapter
+        end
       end
 
       site.posts.each do |post|
