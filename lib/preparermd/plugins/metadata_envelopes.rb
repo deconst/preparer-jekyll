@@ -27,7 +27,7 @@ module PreparerMD
     end
 
     def render_json(page, site)
-      layout = page.data["deconst-layout"] || page.data["layout"]
+      layout = page.data["deconst_layout"] || page.data["layout"]
 
       page.data["layout"] = nil
       page.render({}, site.site_payload)
@@ -38,7 +38,40 @@ module PreparerMD
         title: output["title"],
         body: output["content"],
         layout_key: layout,
+        categories: output["categories"] || [],
+        tags: output["tags"] || []
       }
+
+      attr_plain = ->(from, to = from) { envelope[to] = output[from] if output[from] }
+      attr_date = ->(from, to = from) { envelope[to] = output[from].rfc2822 if output[from] }
+      attr_page = ->(from, to = from) do
+        linked_page = output[from]
+        envelope[to] = { url: linked_page.url, title: linked_page.title } if linked_page
+      end
+
+      attr_plain.call "author"
+      attr_plain.call "bio"
+      attr_date.call "date", "publish_date"
+      attr_page.call "next"
+      attr_page.call "previous"
+
+      # Discus integration attributes
+      page_disqus = output["disqus"]
+      if page_disqus || site.config["disqus_short_name"]
+        short_name = site.config["disqus_short_name"]
+        mode = site.config["disqus_default_mode"] || "embed"
+
+        if page_disqus
+          short_name = page_disqus["short_name"] if page_disqus["short_name"]
+          mode = page_disqus["mode"] if page_disqus["mode"]
+        end
+
+        envelope["disqus"] = {
+          include: true,
+          short_name: short_name,
+          embed: mode == "embed"
+        }
+      end
 
       if PreparerMD.config.should_submit?
         base = PreparerMD.config.content_id_base
