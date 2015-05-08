@@ -38,7 +38,31 @@ module PreparerMD
         title: output["title"],
         body: output["content"],
         layout_key: layout,
+        categories: output["categories"] || [],
+        tags: output["tags"] || []
       }
+
+      attr_plain = ->(from, to = from) { envelope[to] = output[from] if output[from] }
+      attr_date = ->(from, to = from) { envelope[to] = output[from].rfc2822 if output[from] }
+      attr_page = ->(from, to = from) do
+        linked_page = output[from]
+        envelope[to] = { url: linked_page.url, title: linked_page.title } if linked_page
+      end
+
+      attr_plain.call "author"
+      attr_plain.call "bio"
+      attr_date.call "date", "publish_date"
+      attr_page.call "next"
+      attr_page.call "prev"
+
+      # Discus integration attributes
+      if output["disqus"]
+        envelope["disqus"] = {
+          include: true,
+          short_name: output["disqus"]["short_name"],
+          embed: output["disqus"]["mode"] != "count"
+        }
+      end
 
       if PreparerMD.config.should_submit?
         base = PreparerMD.config.content_id_base
