@@ -56,14 +56,20 @@ module PreparerMD
       attr_page.call "previous"
 
       # Discus integration attributes
-      if output["disqus"]
-        short_name = output["disqus"]["short_name"] ||
-          site.config["disqus_short_name"]
+      page_disqus = output["disqus"]
+      if page_disqus || site.config["disqus_short_name"]
+        short_name = site.config["disqus_short_name"]
+        mode = site.config["disqus_default_mode"] || "embed"
+
+        if page_disqus
+          short_name = page_disqus["short_name"] if page_disqus["short_name"]
+          mode = page_disqus["mode"] if page_disqus["mode"]
+        end
 
         envelope["disqus"] = {
           include: true,
           short_name: short_name,
-          embed: output["disqus"]["mode"] != "count"
+          embed: mode == "embed"
         }
       end
 
