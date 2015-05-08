@@ -53,13 +53,16 @@ module PreparerMD
       attr_plain.call "bio"
       attr_date.call "date", "publish_date"
       attr_page.call "next"
-      attr_page.call "prev"
+      attr_page.call "previous"
 
       # Discus integration attributes
       if output["disqus"]
+        short_name = output["disqus"]["short_name"] ||
+          site.config["disqus_short_name"]
+
         envelope["disqus"] = {
           include: true,
-          short_name: output["disqus"]["short_name"],
+          short_name: short_name,
           embed: output["disqus"]["mode"] != "count"
         }
       end
