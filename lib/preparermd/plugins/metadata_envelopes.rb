@@ -27,7 +27,7 @@ module PreparerMD
     end
 
     def render_json(page, site)
-      layout = page.data["deconst-layout"] || page.data["layout"]
+      layout = page.data["deconst_layout"] || page.data["layout"]
 
       page.data["layout"] = nil
       page.render({}, site.site_payload)
