@@ -54,6 +54,7 @@ module PreparerMD
       attr_date.call "date", "publish_date"
       attr_page.call "next"
       attr_page.call "previous"
+      attr_plain.call "queries"
 
       # Discus integration attributes
       page_disqus = output["disqus"]
