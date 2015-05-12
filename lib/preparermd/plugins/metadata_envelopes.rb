@@ -29,6 +29,10 @@ module PreparerMD
     def render_json(page, site)
       layout = page.data["deconst_layout"] || page.data["layout"]
 
+      global_tags = site.config["deconst_tags"] || []
+      global_post_tags = site.config["deconst_post_tags"] || []
+      global_page_tags = site.config["deconst_page_tags"] || []
+
       page.data["layout"] = nil
       page.render({}, site.site_payload)
 
@@ -38,9 +42,22 @@ module PreparerMD
         title: output["title"],
         body: output["content"],
         layout_key: layout,
-        categories: output["categories"] || [],
-        tags: output["tags"] || []
+        categories: output["categories"] || []
       }
+
+      tags = Set.new(output["tags"] || [])
+
+      tags.merge(global_tags)
+      tags.merge(case page
+        when Jekyll::Page
+          global_page_tags
+        when Jekyll::Post
+          global_post_tags
+        else
+          []
+        end)
+
+      envelope["tags"] = tags.to_a
 
       attr_plain = ->(from, to = from) { envelope[to] = output[from] if output[from] }
       attr_date = ->(from, to = from) { envelope[to] = output[from].rfc2822 if output[from] }
@@ -54,6 +71,7 @@ module PreparerMD
       attr_date.call "date", "publish_date"
       attr_page.call "next"
       attr_page.call "previous"
+      attr_plain.call "queries"
 
       # Discus integration attributes
       page_disqus = output["disqus"]

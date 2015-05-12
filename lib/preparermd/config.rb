@@ -10,7 +10,7 @@ module PreparerMD
     #
     def initialize
       @content_store_url = ENV.fetch('CONTENT_STORE_URL', '').gsub(%r{/\Z}, '')
-      @content_store_apikey = ENV['CONTENT_STORE_APIKEY']
+      @content_store_apikey = ENV.fetch('CONTENT_STORE_APIKEY', '')
       @content_id_base = ENV.fetch('CONTENT_ID_BASE', '').gsub(%r{/\Z}, '')
     end
 
