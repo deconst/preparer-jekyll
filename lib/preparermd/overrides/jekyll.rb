@@ -6,20 +6,22 @@ require 'preparermd/overrides/jekyll'
 
 module Jekyll
 
-  # Disable everyone else's generator plugins because screw those things.
-  #
-  class Generator < Plugin
-    def self.descendants
-      [PreparerMD::JSONGenerator]
-    end
-  end
-
   class Site
 
     # Hook the Jekyll Assets environment creation to use our own Environment subclass.
     #
     def assets
       @assets ||= Environment.new(self)
+    end
+
+    alias :old_setup :setup
+    def setup
+      old_setup
+
+      # Ensure that the JSONGenerator is absolutely, positively, the last thing that runs, for
+      # reals
+      self.generators.delete_if { |g| PreparerMD::JSONGenerator === g }
+      self.generators << PreparerMD::JSONGenerator.new(self.config)
     end
 
     # Don't actually render the page because why would we want to do that
@@ -36,6 +38,7 @@ module Jekyll
     #
     def cleanup
     end
+
   end
 
 end
