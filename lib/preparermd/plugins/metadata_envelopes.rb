@@ -66,6 +66,7 @@ module PreparerMD
         envelope[to] = { url: linked_page.url, title: linked_page.title } if linked_page
       end
 
+      attr_plain.call "content_type"
       attr_plain.call "author"
       attr_plain.call "bio"
       attr_date.call "date", "publish_date"
