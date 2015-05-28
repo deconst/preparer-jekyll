@@ -48,7 +48,8 @@ Other frontmatter keys that have special meaning to Deconst include:
  * `date`
  * `disqus`. If present, this must be a dictionary containing `short_name` or `mode` subattributes:
    * `short_name` will be used as the Disqus "short name", used to identify the associated Disqus account.
-   * `mode` must be either `count` or `embed`. If unspecified,
+   * `mode` must be either `count` or `embed`. If unspecified
+ * `content_type`
 
 All of these keys are optional. If present, each will be included within the metadata envelope generated for that page, and will be made available to the Handlebars templates in the control repository for rendering.
 
