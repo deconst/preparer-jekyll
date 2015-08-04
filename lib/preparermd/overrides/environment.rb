@@ -32,6 +32,9 @@ class Index < Sprockets::Index
     if PreparerMD.config.should_submit?
       super.tap do |asset|
         asset.pathname.open do |f|
+          print "Submitting content asset: [#{asset.logical_path}] .. "
+          $stdout.flush
+
           response = @conn.post do |req|
             req.url '/assets'
             req.headers['Authorization'] = auth
@@ -45,7 +48,7 @@ class Index < Sprockets::Index
           asset.extend PreparerMD::AssetPatch
           asset.asset_cdn_url = asset_url
 
-          puts "Submitted content asset: [#{asset.logical_path}]"
+          puts "ok"
         end
       end
     else
