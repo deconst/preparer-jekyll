@@ -19,6 +19,7 @@ class Index < Sprockets::Index
     super
 
     @conn = Faraday.new(url: PreparerMD.config.content_store_url) do |conn|
+      conn.request :retry, max: 3, methods: [:post]
       conn.request :multipart
       conn.response :raise_error
 
@@ -41,6 +42,9 @@ class Index < Sprockets::Index
             req.body = {
               asset.logical_path => Faraday::UploadIO.new(f, asset.content_type, asset.logical_path)
             }
+
+            req.options.timeout = 120
+            req.options.open_timeout = 60
           end
 
           asset_url = JSON.parse(response.body)[File.basename asset.logical_path]
