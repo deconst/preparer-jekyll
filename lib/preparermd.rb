@@ -16,6 +16,11 @@ module PreparerMD
   #
   def self.build
     @config = Config.new
+
+    if File.exist?("_deconst.json")
+      File.open("_deconst.json", "r") { |cf| @config.load_from(cf.read) }
+    end
+
     @config.validate
 
     if File.exist?("Gemfile")

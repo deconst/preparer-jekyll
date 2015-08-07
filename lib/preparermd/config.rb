@@ -1,3 +1,5 @@
+require 'json'
+
 module PreparerMD
 
   # Configuration values and credentials read from the process' environment.
@@ -12,6 +14,22 @@ module PreparerMD
       @content_store_url = ENV.fetch('CONTENT_STORE_URL', '').gsub(%r{/\Z}, '')
       @content_store_apikey = ENV.fetch('CONTENT_STORE_APIKEY', '')
       @content_id_base = ENV.fetch('CONTENT_ID_BASE', '').gsub(%r{/\Z}, '')
+    end
+
+    def load_from(f)
+      JSON.parse(f).each do |setting, value|
+        case setting
+        when "contentIDBase"
+          if @content_id_base == ""
+            @content_id_base = value
+          elsif @content_id_base != value
+            $stderr.puts "Using environment variable CONTENT_ID_BASE=[#{@content_id_base}] " \
+              "instead of _deconst.json setting [#{value}]."
+          end
+        else
+          $stderr.puts "Ignoring an unrecognized configuration setting: [#{setting}]"
+        end
+      end
     end
 
     # Determine and report (to stderr) whether or not we have enough information to submit to the
