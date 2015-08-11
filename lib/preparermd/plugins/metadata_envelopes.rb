@@ -38,12 +38,11 @@ module PreparerMD
 
       output = page.to_liquid
 
-      envelope = {
-        title: output["title"],
-        body: output["content"],
-        layout_key: layout,
-        categories: output["categories"] || []
-      }
+      envelope = page.data;
+
+      envelope["title"] = output["title"]
+      envelope["body"] = output["content"]
+      envelope["categories"] = output["categories"] || []
 
       tags = Set.new(output["tags"] || [])
 
