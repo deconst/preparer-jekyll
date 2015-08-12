@@ -14,7 +14,7 @@ module PreparerMD
 
   # Primary entry point for the site build. Execute a Jekyll build with customized options.
   #
-  def self.build
+  def self.build(source = './')
     @config = Config.new
     @config.validate
 
@@ -24,7 +24,7 @@ module PreparerMD
     end
 
     puts "Building and submitting content."
-    Jekyll::Commands::Build.process({})
+    Jekyll::Commands::Build.process({source: source})
   end
 
   # Access the preparer's configuration.

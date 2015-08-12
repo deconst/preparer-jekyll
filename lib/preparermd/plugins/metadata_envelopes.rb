@@ -38,11 +38,12 @@ module PreparerMD
 
       output = page.to_liquid
 
-      envelope = page.data.dup
-
-      envelope["title"] = output["title"]
-      envelope["body"] = output["content"]
-      envelope["categories"] = output["categories"] || []
+      envelope = {
+        title: output["title"],
+        body: output["content"],
+        categories: output["categories"] || [],
+        meta: page.data.dup
+      }
 
       tags = Set.new(output["tags"] || [])
 
