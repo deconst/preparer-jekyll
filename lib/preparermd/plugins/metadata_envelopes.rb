@@ -38,7 +38,7 @@ module PreparerMD
 
       output = page.to_liquid
 
-      envelope = page.data;
+      envelope = page.data
 
       envelope["title"] = output["title"]
       envelope["body"] = output["content"]
