@@ -41,8 +41,8 @@ module PreparerMD
       envelope = {
         title: output["title"],
         body: output["content"],
-        layout_key: layout,
-        categories: output["categories"] || []
+        categories: output["categories"] || [],
+        meta: page.data.dup
       }
 
       tags = Set.new(output["tags"] || [])
