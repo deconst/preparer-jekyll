@@ -27,6 +27,11 @@ module PreparerMD
     end
 
     def render_json(page, site)
+
+      if PreparerMD.config.jekyll_document != '' and PreparerMD.config.jekyll_document != Jekyll::URL.unescape_path(page.url)
+        return 0
+      end
+
       layout = page.data["deconst_layout"] || page.data["layout"]
 
       global_tags = site.config["deconst_tags"] || []

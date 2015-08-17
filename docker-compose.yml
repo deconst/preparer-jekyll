@@ -1,0 +1,29 @@
+---
+mongo:
+  image: mongo:2.6
+content:
+  image: quay.io/deconst/content-service
+  links:
+  - "mongo:mongo"
+  environment:
+    RACKSPACE_USERNAME:
+    RACKSPACE_APIKEY:
+    RACKSPACE_REGION:
+    ADMIN_APIKEY:
+    CONTENT_CONTAINER:
+    ASSET_CONTAINER:
+    MONGODB_URL: mongodb://mongo:27017/content
+    CONTENT_LOG_LEVEL: DEBUG
+preparer:
+    build: .
+    links:
+        - content
+    environment:
+        CONTENT_STORE_URL: http://content:8080
+        CONTENT_STORE_APIKEY:
+        CONTENT_ID_BASE:
+        TRAVIS_PULL_REQUEST: "false"
+        JEKYLL_DOCUMENT:
+    volumes:
+        - ".:/usr/src/app"
+        - "${JEKYLL_PATH}:/usr/content-repo"

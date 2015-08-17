@@ -13,16 +13,17 @@ It's intended to be used within a CI system to present content to the rest of th
 To run the Jekyll preparer locally, you'll need to install:
 
  * [Docker](https://docs.docker.com/installation/#installation) for your platform. Choose the boot2docker option for Mac OS X or Windows.
+ * [Docker Compose](https://docs.docker.com/compose/install/)
 
-Once you have Docker set up, export any desired configuration variables, run `deconst-preparer-jekyll.sh` with the path of a control repository clone to prepare the Jekyll content found there.
+Once you have Docker set up, create a copy of the file `env.example` named `env` and customize it with your Rackspace credentials, container names, local content service API Key, and path to your Jekyll repo.
 
-```bash
-export CONTENT_STORE_URL=http://my-content-store.com:9000/
-export CONTENT_STORE_APIKEY="cd54a09f6593cb5b17177..."
-export CONTENT_ID_BASE=https://github.com/myorg/myrepo
+Run the preparer to build the Jekyll site and submit content to the content service:
 
-./deconst-preparer-jekyll.sh /path/to/content-repo
 ```
+bin/submit [document-path]
+```
+
+When the `document-path` argument is provided, only that page will be submitted to the content service. This can be useful when debugging things on a large site. `document-path` should be a root-relative URL, such as `/blog/index.html`. When `document-path` is not provided, all pages and assets in the site will be submitted to the content service.
 
 ### Configuration
 

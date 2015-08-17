@@ -5,7 +5,7 @@ module PreparerMD
   # Configuration values and credentials read from the process' environment.
   #
   class Config
-    attr_reader :content_store_url, :content_store_apikey, :content_id_base
+    attr_reader :content_store_url, :content_store_apikey, :content_id_base, :jekyll_document
 
 
     # Create a new configuration populated with values from the environment.
@@ -14,6 +14,7 @@ module PreparerMD
       @content_store_url = ENV.fetch('CONTENT_STORE_URL', '').gsub(%r{/\Z}, '')
       @content_store_apikey = ENV.fetch('CONTENT_STORE_APIKEY', '')
       @content_id_base = ENV.fetch('CONTENT_ID_BASE', '').gsub(%r{/\Z}, '')
+      @jekyll_document = ENV.fetch('JEKYLL_DOCUMENT', '')
     end
 
     def load_from(f)
