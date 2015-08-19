@@ -11,6 +11,7 @@ module PreparerMD
     def generate(site)
       if PreparerMD.config.should_submit?
         @conn = Faraday.new(url: PreparerMD.config.content_store_url) do |conn|
+          conn.request :retry, max: 3, methods: [:put]
           conn.response :raise_error
 
           conn.adapter Faraday.default_adapter
@@ -107,6 +108,9 @@ module PreparerMD
           req.headers['Content-Type'] = 'application/json'
           req.headers['Authorization'] = auth
           req.body = envelope.to_json
+
+          req.options.timeout = 120
+          req.options.open_timeout = 60
         end
 
         puts "ok"
