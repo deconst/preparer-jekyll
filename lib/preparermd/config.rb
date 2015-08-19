@@ -21,8 +21,8 @@ module PreparerMD
         case setting
         when "contentIDBase"
           if @content_id_base == ""
-            @content_id_base = value
-          elsif @content_id_base != value
+            @content_id_base = value.gsub(%r{/\Z}, '')
+          elsif @content_id_base != value.gsub(%r{/\Z}, '')
             $stderr.puts "Using environment variable CONTENT_ID_BASE=[#{@content_id_base}] " \
               "instead of _deconst.json setting [#{value}]."
           end
