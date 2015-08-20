@@ -10,6 +10,9 @@ COPY preparermd.gemspec /usr/src/app/preparermd.gemspec
 COPY lib/preparermd/version.rb /usr/src/app/lib/preparermd/version.rb
 RUN bundle install
 
+COPY . /usr/src/app
+
+VOLUME /usr/content-repo
 WORKDIR /usr/content-repo
 
 CMD ["ruby", "-I/usr/src/app/lib", "-rpreparermd", "-e", "PreparerMD.build"]
