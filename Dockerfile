@@ -12,7 +12,7 @@ RUN bundle install
 
 COPY . /usr/src/app
 
-VOLUME /usr/control-repo
-WORKDIR /usr/control-repo
+VOLUME /usr/content-repo
+WORKDIR /usr/content-repo
 
 CMD ["ruby", "-I/usr/src/app/lib", "-rpreparermd", "-e", "PreparerMD.build"]

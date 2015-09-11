@@ -1,0 +1,9 @@
+#!/bin/bash
+set -euo pipefail
+IFS=$'\n\t'
+
+source ./env
+
+JEKYLL_DOCUMENT=${1:-""};
+
+JEKYLL_DOCUMENT=$JEKYLL_DOCUMENT docker-compose up
