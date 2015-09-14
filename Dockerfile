@@ -1,7 +1,7 @@
 FROM ruby:2.2.2
 MAINTAINER Ash Wilson <ash.wilson@rackspace.com>
 
-RUN mkdir -p /usr/src/app /usr/control-repo
+RUN mkdir -p /usr/src/app /usr/content-repo
 
 WORKDIR /usr/src/app
 COPY Gemfile /usr/src/app/Gemfile
