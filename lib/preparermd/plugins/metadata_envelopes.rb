@@ -41,7 +41,7 @@ module PreparerMD
       # Is this a page/post, or a collection item?
       # This is probably not a conclusive test
       is_post = document.respond_to?('render')
-
+      envelope = {}
       global_tags = site.config["deconst_tags"] || []
       global_post_tags = site.config["deconst_post_tags"] || []
       global_page_tags = site.config["deconst_page_tags"] || []
