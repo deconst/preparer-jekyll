@@ -142,7 +142,7 @@ module PreparerMD
         auth = "deconst apikey=\"#{PreparerMD.config.content_store_apikey}\""
 
         content_id = File.join(base, Jekyll::URL.unescape_path(document.url))
-        content_id.gsub! %r{/index\.html\Z}, ""
+        content_id.gsub! %r{/+(index\.html)?\Z}, ""
 
         print "Submitting envelope: [#{content_id}] .. "
         $stdout.flush

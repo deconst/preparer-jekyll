@@ -1,18 +1,9 @@
 ---
-mongo:
-  image: mongo:2.6
 content:
   image: quay.io/deconst/content-service
-  links:
-  - "mongo:mongo"
   environment:
-    RACKSPACE_USERNAME:
-    RACKSPACE_APIKEY:
-    RACKSPACE_REGION:
+    STORAGE: memory
     ADMIN_APIKEY:
-    CONTENT_CONTAINER:
-    ASSET_CONTAINER:
-    MONGODB_URL: mongodb://mongo:27017/content
     CONTENT_LOG_LEVEL: DEBUG
 preparer:
     build: .
