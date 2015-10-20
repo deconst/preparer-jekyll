@@ -1,5 +1,10 @@
-FROM ruby:2.2.2
+FROM alpine:3.2
 MAINTAINER Ash Wilson <ash.wilson@rackspace.com>
+
+RUN apk add --update ruby ruby-json ruby-dev git build-base libffi-dev nodejs python \
+  && rm -rf /var/cache/apk/* \
+  && rm -rf /usr/share/ri
+RUN gem install bundler --no-rdoc --no-ri
 
 RUN mkdir -p /usr/src/app /usr/content-repo
 
