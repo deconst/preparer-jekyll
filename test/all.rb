@@ -73,7 +73,10 @@ class Testcase
     actual_assets = asset_set_from @actual
 
     HashDiff.diff(actual_envelopes, expected_envelopes).each do |diff|
-      @diffs << diff.join(" ")
+      op = diff[0]
+      key = diff[1]
+      rest = diff[2..-1].map { |d| "[#{d}]" }.join(" ")
+      @diffs << "#{op} #{bold(key)} #{rest}"
     end
 
     HashDiff.diff(actual_assets, expected_assets).each do |diff|
