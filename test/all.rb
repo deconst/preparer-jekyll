@@ -46,12 +46,12 @@ class Testcase
       PreparerMD.build(@root, @actual)
 
       if self.compare?
-        @outcome = :success
+        @outcome = :ok
         FileUtil.rm_rf @actual
       else
-        @outcome = :failure
+        @outcome = :fail
       end
-    rescue e
+    rescue Exception => e
       @outcome = :error
       @error = e
     ensure
@@ -126,5 +126,7 @@ testcases.each do |testcase|
   print "#{testcase.name} .. "
   $stdout.flush
 
-  puts "ok"
+  testcase.run
+
+  puts testcase.outcome
 end
