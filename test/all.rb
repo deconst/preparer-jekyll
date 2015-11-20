@@ -4,7 +4,6 @@ require 'term/ansicolor'
 require 'hashdiff'
 require 'fileutils'
 require 'find'
-require 'set'
 require 'json'
 require 'stringio'
 require_relative '../lib/preparermd'
@@ -51,7 +50,7 @@ class Testcase
 
       if self.compare?
         @outcome = :ok
-        FileUtil.rm_rf @actual
+        FileUtils.rm_rf @actual
       else
         @outcome = :fail
       end
@@ -70,8 +69,8 @@ class Testcase
     expected_envelopes = envelope_set_from @expected
     expected_assets = asset_set_from @expected
 
-    actual_envelopes = envelope_set_from(@actual).to_a.sort
-    actual_assets = asset_set_from(@actual).to_a.sort
+    actual_envelopes = envelope_set_from @actual
+    actual_assets = asset_set_from @actual
 
     HashDiff.diff(actual_envelopes, expected_envelopes).each do |diff|
       @diffs << diff.join(" ")
@@ -100,12 +99,15 @@ class Testcase
   end
 
   def asset_set_from dir
-    assets = Set.new
+    assets = []
     base = File.join(dir, 'assets')
+
+    return assets unless File.exists?(base) && File.directory?(base)
+
     Find.find(base) do |path|
-      assets.add(path[base.size..-1])
+      assets << path[base.size..-1]
     end
-    assets
+    assets.sort
   end
 
   def report
