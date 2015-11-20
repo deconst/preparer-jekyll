@@ -123,7 +123,7 @@ s = testcases.size == 1 ? '' : 's'
 puts "#{testcases.size} testcase#{s} discovered."
 
 testcases.each do |testcase|
-  print "#{testcase.name} .."
+  print "#{testcase.name} .. "
   $stdout.flush
 
   puts "ok"
