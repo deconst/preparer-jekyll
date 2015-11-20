@@ -161,7 +161,7 @@ module PreparerMD
       else
         path = File.join(site.dest, CGI.escape content_id)
 
-        print "Writing envelope to [#{path}] .."
+        print "Writing envelope: [#{path}] .."
         $stdout.flush
 
         FileUtils.mkdir_p(File.dirname(path))
