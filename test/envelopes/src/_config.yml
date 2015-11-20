@@ -1,0 +1,14 @@
+# Site settings
+title: The site title
+description: The site description
+
+# Build settings
+markdown: redcarpet
+encoding: UTF-8
+redcarpet:
+  extensions: ["with_toc_data"]
+
+# Jekyll Assets
+assets:
+  sources:
+  - _assets/img
