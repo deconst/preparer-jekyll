@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+require 'term/ansicolor'
 require 'hashdiff'
 require 'fileutils'
 require 'find'
@@ -10,6 +11,8 @@ require_relative '../lib/preparermd'
 
 ROOT = File.expand_path('..', File.dirname(__FILE__))
 TESTCASE_ROOT = File.join(ROOT, 'test')
+
+include Term::ANSIColor
 
 class Testcase
   attr_reader :outcome, :error, :output
@@ -42,8 +45,9 @@ class Testcase
       $stdout = capture
       $stderr = capture
 
+      FileUtils.rm_rf @actual if File.exist? @actual
       FileUtils.mkdir_p @actual
-      PreparerMD.build(@root, @actual)
+      PreparerMD.build(@src, @actual)
 
       if self.compare?
         @outcome = :ok
@@ -104,6 +108,43 @@ class Testcase
     assets
   end
 
+  def report
+    report = StringIO.new
+    header, output, diff, stacktrace = false, false, false, false
+
+    case @outcome
+    when :fail
+      header, diff = true, true
+    when :error
+      header, output, stacktrace = true, true, true
+    end
+
+    if header
+      report.puts
+      report.puts negative("== Report [#{name}]")
+    end
+
+    if output
+      report.puts cyan(">> stdout and stderr")
+      report.puts @output
+      report.puts cyan(">> end")
+    end
+
+    if diff
+      report.puts cyan(">> diff")
+      report.puts @diffs.join("\n")
+      report.puts cyan(">> end")
+    end
+
+    if stacktrace
+      report.puts cyan(">> stacktrace")
+      report.puts @error
+      report.puts @error.backtrace.join("\n  ")
+    end
+
+    report.string
+  end
+
   def self.all
     Dir.entries(TESTCASE_ROOT).reject do |e|
       e =~ /^\.\.?$/
@@ -120,13 +161,19 @@ end
 testcases = Testcase.all
 
 s = testcases.size == 1 ? '' : 's'
-puts "#{testcases.size} testcase#{s} discovered."
+puts bold("#{testcases.size} testcase#{s} discovered.")
 
 testcases.each do |testcase|
-  print "#{testcase.name} .. "
+  print cyan("#{testcase.name} .. ")
   $stdout.flush
 
   testcase.run
 
-  puts testcase.outcome
+  print case testcase.outcome
+    when :ok ; green
+    else ; red
+    end
+  puts testcase.outcome.to_s + reset
 end
+
+puts testcases.map { |t| t.report }.join("\n")
