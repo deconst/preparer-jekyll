@@ -127,13 +127,11 @@ class Testcase
     if output
       report.puts cyan(">> stdout and stderr")
       report.puts @output
-      report.puts cyan(">> end")
     end
 
     if diff
       report.puts cyan(">> diff")
       report.puts @diffs.join("\n")
-      report.puts cyan(">> end")
     end
 
     if stacktrace
