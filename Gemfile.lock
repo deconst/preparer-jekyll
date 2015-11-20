@@ -28,6 +28,7 @@ GEM
     fastimage (1.7.0)
       addressable (~> 2.3, >= 2.3.5)
     ffi (1.9.10)
+    hashdiff (0.2.3)
     hike (1.2.3)
     jekyll (2.5.3)
       classifier-reborn (~> 2.0)
@@ -115,6 +116,7 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (~> 1.9)
+  hashdiff
   preparermd!
   pry
   rake (~> 10.0)
