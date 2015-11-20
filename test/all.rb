@@ -11,6 +11,8 @@ require_relative '../lib/preparermd'
 ROOT = File.expand_path('..', File.dirname(__FILE__))
 TESTCASE_ROOT = File.join(ROOT, 'test')
 
+ENV["TRAVIS_PULL_REQUEST"] = "don't actually submit anywhere"
+
 include Term::ANSIColor
 
 class Testcase
