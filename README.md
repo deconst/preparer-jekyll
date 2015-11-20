@@ -2,6 +2,7 @@
 
 .md :point_right: .json :point_right: :wrench: :point_right: content service
 
+[![Build Status](https://travis-ci.org/deconst/preparer-jekyll.svg?branch=master)](https://travis-ci.org/deconst/preparer-jekyll)
 [![Docker Repository on Quay.io](https://quay.io/repository/deconst/preparer-jekyll/status "Docker Repository on Quay.io")](https://quay.io/repository/deconst/preparer-jekyll)
 
 *preparermd* builds each page of a [Jekyll site](http://jekyllrb.com/) into custom JSON metadata envelopes and broadcasts them to a [content service](https://github.com/deconst/content-service) that performs storage and indexing for presentation and search.

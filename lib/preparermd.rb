@@ -14,11 +14,12 @@ module PreparerMD
 
   # Primary entry point for the site build. Execute a Jekyll build with customized options.
   #
-  def self.build(source = './')
+  def self.build(source = Dir.pwd, destination = File.join(Dir.pwd, '_site'))
     @config = Config.new
 
-    if File.exist?("_deconst.json")
-      File.open("_deconst.json", "r") { |cf| @config.load_from(cf.read) }
+    config_path = File.join(source, "_deconst.json")
+    if File.exist?(config_path)
+      File.open(config_path, "r") { |cf| @config.load_from(cf.read) }
     end
 
     @config.validate
@@ -29,7 +30,7 @@ module PreparerMD
     end
 
     puts "Building and submitting content."
-    Jekyll::Commands::Build.process({source: source})
+    Jekyll::Commands::Build.process({source: source, destination: destination})
   end
 
   # Access the preparer's configuration.

@@ -56,7 +56,19 @@ class Index < Sprockets::Index
         end
       end
     else
-      super
+      super.tap do |asset|
+        dest = File.join(@environment.site.dest, "assets", asset.pathname.basename.to_s)
+        print "Copying content asset: [#{asset.pathname}] .. "
+        $stdout.flush
+
+        FileUtils.mkdir_p File.dirname(dest)
+        FileUtils.cp asset.pathname.to_s, dest
+
+        asset.extend PreparerMD::AssetPatch
+        asset.asset_cdn_url = dest
+
+        puts "ok"
+      end
     end
   end
 end
