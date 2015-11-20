@@ -63,6 +63,10 @@ class Index < Sprockets::Index
 
         FileUtils.mkdir_p File.dirname(dest)
         FileUtils.cp asset.pathname.to_s, dest
+
+        asset.extend PreparerMD::AssetPatch
+        asset.asset_cdn_url = dest
+
         puts "ok"
       end
     end
