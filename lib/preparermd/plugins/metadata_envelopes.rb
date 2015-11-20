@@ -159,7 +159,7 @@ module PreparerMD
 
         puts "ok"
       else
-        path = File.join(site.dest, CGI.escape content_id)
+        path = File.join(site.dest, CGI.escape(content_id))
 
         print "Writing envelope: [#{path}] .."
         $stdout.flush
