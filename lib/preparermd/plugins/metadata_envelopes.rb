@@ -132,17 +132,17 @@ module PreparerMD
 
     def render_json(document, site)
       if PreparerMD.config.jekyll_document != '' and PreparerMD.config.jekyll_document != Jekyll::URL.unescape_path(document.url)
-        return 0
+        return
       end
 
       envelope = envelope_from_document(document, site)
 
-      if PreparerMD.config.should_submit?
-        base = PreparerMD.config.content_id_base
-        auth = "deconst apikey=\"#{PreparerMD.config.content_store_apikey}\""
+      base = PreparerMD.config.content_id_base
+      content_id = File.join(base, Jekyll::URL.unescape_path(document.url))
+      content_id.gsub! %r{/+(index\.html)?\Z}, ""
 
-        content_id = File.join(base, Jekyll::URL.unescape_path(document.url))
-        content_id.gsub! %r{/+(index\.html)?\Z}, ""
+      if PreparerMD.config.should_submit?
+        auth = "deconst apikey=\"#{PreparerMD.config.content_store_apikey}\""
 
         print "Submitting envelope: [#{content_id}] .. "
         $stdout.flush
@@ -159,18 +159,14 @@ module PreparerMD
 
         puts "ok"
       else
-        path = document.destination(site.dest)
+        path = File.join(site.dest, CGI.escape content_id)
 
-        if path == File.join(site.dest, "index.html")
-          path = File.join(site.dest, "index.json")
-        else
-          path.gsub! %r{/index\.html\Z}, ".json"
-        end
-
-        puts "Writing envelope to [#{path}]"
+        print "Writing envelope to [#{path}] .."
+        $stdout.flush
 
         FileUtils.mkdir_p(File.dirname(path))
         File.open(path, 'w') { |f| f.write(envelope.to_json) }
+        puts "ok"
       end
     end
 
