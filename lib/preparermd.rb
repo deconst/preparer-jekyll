@@ -17,8 +17,9 @@ module PreparerMD
   def self.build(source = Dir.pwd, destination = File.join(Dir.pwd, '_site'))
     @config = Config.new
 
-    if File.exist?("_deconst.json")
-      File.open("_deconst.json", "r") { |cf| @config.load_from(cf.read) }
+    config_path = File.join(source, "_deconst.json")
+    if File.exist?(config_path)
+      File.open(config_path, "r") { |cf| @config.load_from(cf.read) }
     end
 
     @config.validate
