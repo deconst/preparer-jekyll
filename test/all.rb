@@ -107,10 +107,10 @@ class Testcase
   def self.all
     Dir.entries(TESTCASE_ROOT).reject do |e|
       e =~ /^\.\.?$/
-    end.select do |e|
-      File.directory? e
     end.map do |e|
       File.join TESTCASE_ROOT, e
+    end.select do |p|
+      File.directory? p
     end.map do |p|
       new p
     end
