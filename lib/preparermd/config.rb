@@ -61,6 +61,12 @@ module PreparerMD
         reasons << "This looks like a pull request build on Travis."
       end
 
+      unless @content_store_tls_verify
+        $stderr.puts
+        $stderr.puts "TLS certificate verification disabled!"
+        $stderr.puts
+      end
+
       if reasons.empty?
         puts "Content will be submitted to the content service."
 
