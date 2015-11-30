@@ -32,6 +32,7 @@ The following values must be present in the build environment to submit assets:
 
  * `CONTENT_STORE_URL` must be the base URL of the publicly available content store service. The prepare script defaults this to one consistent with our docker-compose setups.
  * `CONTENT_STORE_APIKEY` must be a valid API key issued by the content service. See [the content service documentation](https://github.com/deconst/content-service#post-keysnamedname) for instructions on generating an API key.
+ * `CONTENT_STORE_TLS_VERIFY` may be set to `"false"` to disable certificate verification. 🚨 *Only use this feature for development and local clusters with self-signed certificates. It defeats a lot of the point of encrypting traffic.* 🚨
  * `CONTENT_ID_BASE` must be set to a prefix that's unique among the content repositories associated with the target deconst instance. Our convention is to use the base URL of the GitHub repository.
  * `TRAVIS_PULL_REQUEST` must be set to `"false"`. Travis automatically sets this value for your build environment on the primary branch of your repository.
 
