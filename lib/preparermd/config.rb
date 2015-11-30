@@ -14,7 +14,8 @@ module PreparerMD
     def initialize
       @content_store_url = ENV.fetch('CONTENT_STORE_URL', '').gsub(%r{/\Z}, '')
       @content_store_apikey = ENV.fetch('CONTENT_STORE_APIKEY', '')
-      @content_store_tls_verify = ENV.fetch('CONTENT_STORE_TLS_VERIFY', 'true') == 'false'
+      @content_store_tls_verify = ENV.fetch('CONTENT_STORE_TLS_VERIFY', '') != 'false'
+
       @content_id_base = ENV.fetch('CONTENT_ID_BASE', '').gsub(%r{/\Z}, '')
       @jekyll_document = ENV.fetch('JEKYLL_DOCUMENT', '')
     end
