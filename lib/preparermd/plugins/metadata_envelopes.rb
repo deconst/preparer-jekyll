@@ -10,7 +10,10 @@ module PreparerMD
 
     def generate(site)
       if PreparerMD.config.should_submit?
-        @conn = Faraday.new(url: PreparerMD.config.content_store_url) do |conn|
+        opts = {url: PreparerMD.config.content_store_url}
+        opts[:ssl] = {verify: false} if !PreparerMD.config.content_store_tls_verify
+
+        @conn = Faraday.new(opts) do |conn|
           conn.request :retry, max: 3, methods: [:put]
           conn.response :raise_error
 

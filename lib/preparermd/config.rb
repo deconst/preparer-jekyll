@@ -5,7 +5,8 @@ module PreparerMD
   # Configuration values and credentials read from the process' environment.
   #
   class Config
-    attr_reader :content_store_url, :content_store_apikey, :content_id_base, :jekyll_document
+    attr_reader :content_store_url, :content_store_apikey, :content_store_tls_verify
+    attr_reader :content_id_base, :jekyll_document
 
 
     # Create a new configuration populated with values from the environment.
@@ -13,6 +14,8 @@ module PreparerMD
     def initialize
       @content_store_url = ENV.fetch('CONTENT_STORE_URL', '').gsub(%r{/\Z}, '')
       @content_store_apikey = ENV.fetch('CONTENT_STORE_APIKEY', '')
+      @content_store_tls_verify = ENV.fetch('CONTENT_STORE_TLS_VERIFY', '') != 'false'
+
       @content_id_base = ENV.fetch('CONTENT_ID_BASE', '').gsub(%r{/\Z}, '')
       @jekyll_document = ENV.fetch('JEKYLL_DOCUMENT', '')
     end
@@ -56,6 +59,12 @@ module PreparerMD
 
       if ENV['TRAVIS_PULL_REQUEST'] != "false"
         reasons << "This looks like a pull request build on Travis."
+      end
+
+      unless @content_store_tls_verify
+        $stderr.puts
+        $stderr.puts "TLS certificate verification disabled!"
+        $stderr.puts
       end
 
       if reasons.empty?
