@@ -6,3 +6,4 @@ ROOT=$(cd $(dirname $0)/..; pwd)
 cd ${ROOT}
 
 bundle exec ruby test/all.rb
+exit $?

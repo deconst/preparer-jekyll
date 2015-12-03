@@ -182,3 +182,5 @@ testcases.each do |testcase|
 end
 
 puts testcases.map { |t| t.report }.join("\n")
+
+exit 1 unless testcases.all? { |t| t.outcome == :ok }
