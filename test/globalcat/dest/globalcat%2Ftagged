@@ -1,19 +1,21 @@
 {
   "body": "<p>This page&#39;s frontmatter includes some base categories, including one in common with the global ones.</p>\n",
   "categories": [
-    "page cat one",
-    "page cat two",
-    "in common",
     "global cat one",
-    "global cat two"
+    "global cat two",
+    "in common",
+    "only in deconst",
+    "page cat one",
+    "page cat two"
   ],
   "meta": {
     "categories": [
       "page cat one",
       "page cat two",
-      "in common",
-      "global cat one",
-      "global cat two"
+      "in common"
+    ],
+    "deconst_categories": [
+      "only in deconst"
     ],
     "layout": null
   },

@@ -48,6 +48,7 @@ module PreparerMD
       global_tags = site.config["deconst_tags"] || []
       global_post_tags = site.config["deconst_post_tags"] || []
       global_page_tags = site.config["deconst_page_tags"] || []
+      global_categories = site.config["deconst_categories"] || []
       global_unsearchable = site.config["deconst_default_unsearchable"]
 
       attr_plain = ->(document, from, to = from) { envelope[to] = document[from] unless document[from].nil? }
@@ -66,9 +67,7 @@ module PreparerMD
 
         envelope = {
           title: liquid["title"],
-          body: liquid["content"],
-          categories: liquid["categories"] || [],
-          meta: document.data.dup
+          body: liquid["content"]
         }
 
         attr_plain.call liquid, "content_type"
@@ -80,14 +79,16 @@ module PreparerMD
         attr_plain.call liquid, "queries"
         attr_plain.call liquid, "unsearchable"
 
+        categories = Set.new(liquid["categories"] || [])
+        categories.merge(liquid["deconst_categories"] || [])
+
         tags = Set.new(liquid["tags"] || [])
         page_disqus = liquid["disqus"]
       else
         envelope = {
           title: document.data['title'],
           body: Jekyll::Renderer.new(site, document).run,
-          categories: document.data['categories'] || [],
-          meta: document.data.dup
+          categories: document.data['categories'] || []
         }
 
         attr_plain.call document.data, "content_type"
@@ -98,6 +99,9 @@ module PreparerMD
         attr_page.call document.data, "previous"
         attr_plain.call document.data, "queries"
         attr_plain.call document.data, "unsearchable"
+
+        categories = Set.new(document.data['categories'] || [])
+        categories.merge(document.data['deconst_categories'] || [])
 
         tags = Set.new(document.data['tags'] || [])
         page_disqus = document.data["disqus"]
@@ -112,12 +116,14 @@ module PreparerMD
         else
           []
         end)
+      categories.merge(global_categories)
 
       unless global_unsearchable.nil? || envelope.has_key?("unsearchable")
         envelope["unsearchable"] = global_unsearchable
       end
 
-      envelope["tags"] = tags.to_a
+      envelope["tags"] = tags.to_a.sort
+      envelope["categories"] = categories.to_a.sort
 
       # Discus integration attributes
 
@@ -137,7 +143,9 @@ module PreparerMD
         }
       end
 
-      return envelope
+      envelope["meta"] = document.data.dup
+
+      envelope
     end
 
     def render_json(document, site)

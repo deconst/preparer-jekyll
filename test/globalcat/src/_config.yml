@@ -7,7 +7,7 @@ markdown: redcarpet
 encoding: UTF-8
 
 # Global deconst categories
-global_deconst_categories:
+deconst_categories:
 - global cat one
 - global cat two
 - in common
