@@ -45,6 +45,7 @@ Other frontmatter keys that have special meaning to Deconst include:
 
  * `title`
  * `categories`
+ * `deconst_categories`
  * `tags`
  * `author`
  * `bio`
@@ -62,5 +63,6 @@ Some keys may be set globally for the repository in your `_config.yml` file:
  * `deconst_default_unsearchable` will set the default value of `unsearchable` for all documents.
  * `deconst_tags` specifies tags that should be set on *all* documents within this repository. Tags listed here will be merged with tags specified on individual documents.
  * `deconst_post_tags` is similar, but only for blog posts (in `_posts/`). `deconst_page_tags` applies to non-posts instead.
+ * `deconst_categories` will globally apply one or more categories to each generated envelope.
 
 `disqus_short_name` and `disqus_default_mode` may also be specified globally in the Jekyll site's `_config.yml` file. If so, Disqus attributes will be included in *all* metadata envelopes generated from this content repository. `disqus` settings present in a specific page will override the site-global settings for that page.

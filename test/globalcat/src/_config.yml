@@ -1,0 +1,13 @@
+# Site settings
+title: The site title
+description: The site description
+
+# Build settings
+markdown: redcarpet
+encoding: UTF-8
+
+# Global deconst categories
+deconst_categories:
+- global cat one
+- global cat two
+- in common
