@@ -48,8 +48,9 @@ module PreparerMD
       global_tags = site.config["deconst_tags"] || []
       global_post_tags = site.config["deconst_post_tags"] || []
       global_page_tags = site.config["deconst_page_tags"] || []
+      global_unsearchable = site.config["deconst_default_unsearchable"]
 
-      attr_plain = ->(document, from, to = from) { envelope[to] = document[from] if document[from] }
+      attr_plain = ->(document, from, to = from) { envelope[to] = document[from] unless document[from].nil? }
       attr_date = ->(document, from, to = from) { envelope[to] = document[from].rfc2822 if document[from] }
       attr_page = ->(document, from, to = from) do
         linked_page = document[from]
@@ -77,6 +78,7 @@ module PreparerMD
         attr_page.call liquid, "next"
         attr_page.call liquid, "previous"
         attr_plain.call liquid, "queries"
+        attr_plain.call liquid, "unsearchable"
 
         tags = Set.new(liquid["tags"] || [])
         page_disqus = liquid["disqus"]
@@ -95,6 +97,7 @@ module PreparerMD
         attr_page.call document.data, "next"
         attr_page.call document.data, "previous"
         attr_plain.call document.data, "queries"
+        attr_plain.call document.data, "unsearchable"
 
         tags = Set.new(document.data['tags'] || [])
         page_disqus = document.data["disqus"]
@@ -109,6 +112,10 @@ module PreparerMD
         else
           []
         end)
+
+      unless global_unsearchable.nil? || envelope.has_key?("unsearchable")
+        envelope["unsearchable"] = global_unsearchable
+      end
 
       envelope["tags"] = tags.to_a
 

@@ -12,6 +12,7 @@ author: ME
 bio: the author's bio
 date: 2015-11-20
 publish_date: 2015-11-21
+unsearchable: true
 deconst_layout: the layout key
 ---
 

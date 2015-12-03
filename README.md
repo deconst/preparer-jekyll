@@ -53,7 +53,14 @@ Other frontmatter keys that have special meaning to Deconst include:
    * `short_name` will be used as the Disqus "short name", used to identify the associated Disqus account.
    * `mode` must be either `count` or `embed`. If unspecified, will default to `embed`.
  * `content_type`
+ * `unsearchable` may be `true` to exclude this document from full-text search indexing.
 
 All of these keys are optional. If present, each will be included within the metadata envelope generated for that page, and will be made available to the Handlebars templates in the control repository for rendering.
+
+Some keys may be set globally for the repository in your `_config.yml` file:
+
+ * `deconst_default_unsearchable` will set the default value of `unsearchable` for all documents.
+ * `deconst_tags` specifies tags that should be set on *all* documents within this repository. Tags listed here will be merged with tags specified on individual documents.
+ * `deconst_post_tags` is similar, but only for blog posts (in `_posts/`). `deconst_page_tags` applies to non-posts instead.
 
 `disqus_short_name` and `disqus_default_mode` may also be specified globally in the Jekyll site's `_config.yml` file. If so, Disqus attributes will be included in *all* metadata envelopes generated from this content repository. `disqus` settings present in a specific page will override the site-global settings for that page.
