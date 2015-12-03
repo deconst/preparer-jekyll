@@ -113,6 +113,10 @@ module PreparerMD
           []
         end)
 
+      unless global_unsearchable.nil? || envelope.has_key?("unsearchable")
+        envelope["unsearchable"] = global_unsearchable
+      end
+
       envelope["tags"] = tags.to_a
 
       # Discus integration attributes
