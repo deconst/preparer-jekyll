@@ -50,7 +50,7 @@ module PreparerMD
       global_page_tags = site.config["deconst_page_tags"] || []
       global_unsearchable = site.config["deconst_default_unsearchable"]
 
-      attr_plain = ->(document, from, to = from) { envelope[to] = document[from] if document[from] }
+      attr_plain = ->(document, from, to = from) { envelope[to] = document[from] unless document[from].nil? }
       attr_date = ->(document, from, to = from) { envelope[to] = document[from].rfc2822 if document[from] }
       attr_page = ->(document, from, to = from) do
         linked_page = document[from]
