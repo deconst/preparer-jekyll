@@ -39,6 +39,10 @@ module PreparerMD
         end
       end
 
+      if @meta == nil
+        @meta = {}
+      end
+
       if @github_url
         @meta["github_issues_url"] = [@github_url, '/issues'].map { |s|
           s.gsub(/\/$/, '').gsub(/^\//, '')
