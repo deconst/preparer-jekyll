@@ -146,6 +146,20 @@ module PreparerMD
       meta = PreparerMD.config.meta
       meta = meta.merge(document.data.dup)
 
+      if PreparerMD.config.github_url
+        # Hope Github doesn't change this URL
+        edit_url_segments = [
+          PreparerMD.config.github_url,
+          "edit",
+          PreparerMD.config.github_branch,
+          document.relative_path
+        ]
+
+        meta["github_edit_url"] = edit_url_segments.map { |s|
+          s.gsub(/\/$/, '').gsub(/^\//, '')
+        }.join('/')
+      end
+
       envelope["meta"] = meta
 
       envelope

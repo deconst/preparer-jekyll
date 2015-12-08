@@ -6,7 +6,7 @@ module PreparerMD
   #
   class Config
     attr_reader :content_store_url, :content_store_apikey, :content_store_tls_verify
-    attr_reader :content_id_base, :jekyll_document, :github_url, :meta
+    attr_reader :content_id_base, :jekyll_document, :github_url, :github_branch, :meta
 
 
     # Create a new configuration populated with values from the environment.
@@ -21,32 +21,35 @@ module PreparerMD
     end
 
     def load_from(f)
-      JSON.parse(f).each do |setting, value|
-        case setting
-        when "contentIDBase"
-          if @content_id_base == ""
-            @content_id_base = value.gsub(%r{/\Z}, '')
-          elsif @content_id_base != value.gsub(%r{/\Z}, '')
-            $stderr.puts "Using environment variable CONTENT_ID_BASE=[#{@content_id_base}] " \
-              "instead of _deconst.json setting [#{value}]."
-          end
-        when "githubUrl"
-          @github_url = value
-        when "meta"
-          @meta = value
-        else
-          $stderr.puts "Ignoring an unrecognized configuration setting: [#{setting}]"
+      jsondata = JSON.parse(f)
+
+      if jsondata["contentIDBase"]
+        if @content_id_base == ""
+          @content_id_base = jsondata["contentIDBase"].gsub(%r{/\Z}, '')
+        elsif @content_id_base != jsondata["contentIDBase"].gsub(%r{/\Z}, '')
+          $stderr.puts "Using environment variable CONTENT_ID_BASE=[#{@content_id_base}] " \
+            "instead of _deconst.json setting [#{jsondata["contentIDBase"]}]."
         end
       end
 
-      if @meta == nil
+      if jsondata["meta"]
+        @meta = jsondata["meta"]
+      else
         @meta = {}
       end
 
-      if @github_url
+      if jsondata["githubUrl"]
+        @github_url = jsondata["githubUrl"]
+
         @meta["github_issues_url"] = [@github_url, '/issues'].map { |s|
           s.gsub(/\/$/, '').gsub(/^\//, '')
         }.join('/')
+      end
+
+      if jsondata["githubBranch"]
+        @github_branch = jsondata["githubBranch"]
+      else
+        @github_branch = "master"
       end
     end
 
