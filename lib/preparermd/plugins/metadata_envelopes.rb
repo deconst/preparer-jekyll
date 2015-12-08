@@ -143,7 +143,10 @@ module PreparerMD
         }
       end
 
-      envelope["meta"] = document.data.dup
+      meta = PreparerMD.config.meta
+      meta = meta.merge(document.data.dup)
+
+      envelope["meta"] = meta
 
       envelope
     end

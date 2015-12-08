@@ -6,7 +6,7 @@ module PreparerMD
   #
   class Config
     attr_reader :content_store_url, :content_store_apikey, :content_store_tls_verify
-    attr_reader :content_id_base, :jekyll_document
+    attr_reader :content_id_base, :jekyll_document, :github_url, :meta
 
 
     # Create a new configuration populated with values from the environment.
@@ -30,9 +30,19 @@ module PreparerMD
             $stderr.puts "Using environment variable CONTENT_ID_BASE=[#{@content_id_base}] " \
               "instead of _deconst.json setting [#{value}]."
           end
+        when "githubUrl"
+          @github_url = value
+        when "meta"
+          @meta = value
         else
           $stderr.puts "Ignoring an unrecognized configuration setting: [#{setting}]"
         end
+      end
+
+      if @github_url
+        @meta["github_issues_url"] = [@github_url, '/issues'].map { |s|
+          s.gsub(/\/$/, '').gsub(/^\//, '')
+        }.join('/')
       end
     end
 
