@@ -14,8 +14,20 @@ module PreparerMD
 
   # Primary entry point for the site build. Execute a Jekyll build with customized options.
   #
-  def self.build(source = Dir.pwd, destination = File.join(Dir.pwd, '_site'))
+  def self.build(source = nil, destination = nil)
     @config = Config.new
+
+    if @config.has_content_root?
+      if ! source.nil? && source != @config.content_root
+        puts "Warning: Overriding CONTENT_ROOT [#{@config.content_root}] with argument [#{source}]."
+      else
+        Dir.chdir @config.content_root
+        source = @config.content_root
+      end
+    else
+      source ||= Dir.pwd
+    end
+    destination ||= File.join(source, '_site')
 
     config_path = File.join(source, "_deconst.json")
     if File.exist?(config_path)
