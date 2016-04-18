@@ -5,16 +5,21 @@ module PreparerMD
   # Configuration values and credentials read from the process' environment.
   #
   class Config
-    attr_reader :content_root
-    attr_reader :content_store_url, :content_store_apikey, :content_store_tls_verify
+    attr_reader :content_root, :envelope_dir, :asset_dir
     attr_reader :content_id_base, :jekyll_document, :github_url, :github_branch, :meta
+
+    # To deprecate
+    attr_reader :content_store_url, :content_store_apikey, :content_store_tls_verify
 
 
     # Create a new configuration populated with values from the environment.
     #
     def initialize
       @content_root = ENV.fetch('CONTENT_ROOT', '')
+      @envelope_dir = ENV.fetch('ENVELOPE_DIR', '')
+      @asset_dir = ENV.fetch('ASSET_DIR', '')
 
+      # To deprecate
       @content_store_url = ENV.fetch('CONTENT_STORE_URL', '').gsub(%r{/\Z}, '')
       @content_store_apikey = ENV.fetch('CONTENT_STORE_APIKEY', '')
       @content_store_tls_verify = ENV.fetch('CONTENT_STORE_TLS_VERIFY', '') != 'false'
