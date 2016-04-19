@@ -16,8 +16,8 @@ module PreparerMD
     #
     def initialize
       @content_root = ENV.fetch('CONTENT_ROOT', '')
-      @envelope_dir = ENV.fetch('ENVELOPE_DIR', '')
-      @asset_dir = ENV.fetch('ASSET_DIR', '')
+      @envelope_dir = ENV.fetch('ENVELOPE_DIR', File.join(Dir.pwd, '_site', 'deconst-envelopes'))
+      @asset_dir = ENV.fetch('ASSET_DIR', File.join(Dir.pwd, '_site', 'deconst-assets'))
 
       # To deprecate
       @content_store_url = ENV.fetch('CONTENT_STORE_URL', '').gsub(%r{/\Z}, '')
