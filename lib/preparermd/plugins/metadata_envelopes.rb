@@ -161,6 +161,7 @@ module PreparerMD
       end
 
       envelope["meta"] = meta
+      envelope["asset_offsets"] = site.data["asset_offsets"][document.url] || {}
 
       envelope
     end
