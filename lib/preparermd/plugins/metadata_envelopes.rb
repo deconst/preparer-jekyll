@@ -1,4 +1,5 @@
 require 'json'
+require 'uri'
 require 'jekyll'
 require 'faraday'
 
@@ -161,7 +162,17 @@ module PreparerMD
       end
 
       envelope["meta"] = meta
-      envelope["asset_offsets"] = site.data["asset_offsets"][document.url] || {}
+
+      # Derive asset offsets from the rendered envelope
+      asset_offsets = {}
+      adjustment = 0
+      envelope[:body].gsub! /\[\[deconst-asset:([^\]]+)\]\]/ do
+        md = Regexp.last_match
+        asset_offsets[URI.unescape md[1]] = md.begin(0) + adjustment
+        adjustment -= (md[0].length - 1)
+        'X'
+      end
+      envelope[:asset_offsets] = asset_offsets unless asset_offsets.empty?
 
       envelope
     end

@@ -1,4 +1,5 @@
 require 'json'
+require 'uri'
 
 require 'faraday'
 require 'sprockets'
@@ -67,7 +68,7 @@ class Index < Sprockets::Index
         FileUtils.cp asset.pathname.to_s, dest
 
         asset.extend PreparerMD::AssetPatch
-        asset.asset_render_url = 'X'
+        asset.asset_render_url = "[[deconst-asset:#{URI.escape asset.logical_path, '%]'}]]"
 
         puts "ok"
       end
@@ -83,7 +84,7 @@ class Environment < Jekyll::AssetsPlugin::Environment
   end
 end
 
-# Monkey-patch the Jekyll Assets plugin AssetPath class to use the #asset_cdn_url
+# Monkey-patch the Jekyll Assets plugin AssetPath class to use the #asset_render_url
 #
 module Jekyll
   module AssetsPlugin
@@ -92,44 +93,6 @@ module Jekyll
       alias_method :orig_to_s, :to_s
       def to_s
         @asset.respond_to?(:asset_render_url) ? @asset.asset_render_url : orig_to_s
-      end
-    end
-
-    class Renderer
-      alias_method :orig_initialize, :initialize
-      def initialize(context, params)
-        orig_initialize(context, params)
-
-        @position = context.resource_limits[:render_length_current]
-
-        site = context.registers[:site]
-        page = context.registers[:page]
-        site_offsets = site.data['asset_offsets'] ||= {}
-        @offsets = site_offsets[page['url']] ||= {}
-      end
-
-      def record_asset_position
-        @offsets[asset.logical_path] = @position
-      end
-
-      alias_method :orig_render_asset, :render_asset
-      def render_asset
-        record_asset_position
-        orig_render_asset
-      end
-
-      alias_method :orig_render_asset_path, :render_asset_path
-      def render_asset_path
-        record_asset_position
-        orig_render_asset_path
-      end
-
-      alias_method :orig_render_tag, :render_tag
-      def render_tag(template, extension = "")
-        tag = orig_render_tag
-        @position += tag =~ /(?<=src=")X"/
-        record_asset_position
-        tag
       end
     end
 
