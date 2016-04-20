@@ -1,0 +1,12 @@
+{
+  "title": null,
+  "body": "<h1 id=\"markdown-file-that-references-an-asset\">Markdown file that references an asset</h1>\n\n<p>Including some actual markup before it to test the offsets.</p>\n\n<p><img src=\"X\" alt=\"here it is\"></p>\n\n<p>And a little markup after it to keep things interesting.</p>\n",
+  "tags": [],
+  "categories": [],
+  "meta": {
+    "layout": null
+  },
+  "asset_offsets": {
+    "somepath/coffee-selfie-small.jpg": [0]
+  }
+}

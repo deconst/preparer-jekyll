@@ -48,7 +48,10 @@ class Testcase
 
       FileUtils.rm_rf @actual if File.exist? @actual
       FileUtils.mkdir_p @actual
-      PreparerMD.build(@src, @actual)
+
+      ENV['ENVELOPE_DIR'] = File.join(@actual, 'envelopes')
+      ENV['ASSET_DIR'] = File.join(@actual, 'assets')
+      PreparerMD.build(@src)
 
       if self.compare?
         @outcome = :ok
@@ -90,9 +93,11 @@ class Testcase
 
   def envelope_set_from dir
     envelopes = {}
-    Find.find(dir) do |path|
-      next Find.prune if File.basename(path) == 'assets'
+    base = File.join(dir, 'envelopes')
 
+    return envelopes unless File.directory? base
+
+    Find.find(base) do |path|
       begin
         doc = JSON.parse(File.read(path))
         envelopes[File.basename(path)] = doc
@@ -107,7 +112,7 @@ class Testcase
     assets = []
     base = File.join(dir, 'assets')
 
-    return assets unless File.exists?(base) && File.directory?(base)
+    return assets unless File.directory? base
 
     Find.find(base) do |path|
       assets << path[base.size..-1]
