@@ -166,7 +166,7 @@ module PreparerMD
       # Derive asset offsets from the rendered envelope
       asset_offsets = {}
       adjustment = 0
-      envelope[:body].gsub! /\[\[deconst-asset:([^\]]+)\]\]/ do
+      envelope[:body].gsub! /__deconst-asset:([^_]+)__/ do
         md = Regexp.last_match
         asset_offsets[URI.unescape md[1]] = md.begin(0) + adjustment
         adjustment -= (md[0].length - 1)
