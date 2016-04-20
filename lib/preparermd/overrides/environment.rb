@@ -1,4 +1,5 @@
 require 'json'
+require 'uri'
 
 require 'faraday'
 require 'sprockets'
@@ -8,7 +9,7 @@ require 'jekyll/assets_plugin/environment'
 #
 module PreparerMD
   module AssetPatch
-    attr_accessor :asset_cdn_url
+    attr_accessor :asset_render_url
   end
 end
 
@@ -52,14 +53,14 @@ class Index < Sprockets::Index
           asset_url = JSON.parse(response.body)[File.basename asset.logical_path]
 
           asset.extend PreparerMD::AssetPatch
-          asset.asset_cdn_url = asset_url
+          asset.asset_render_url = asset_url
 
           puts "ok"
         end
       end
     else
       super.tap do |asset|
-        dest = File.join(@environment.site.dest, "assets", asset.pathname.basename.to_s)
+        dest = File.join(PreparerMD.config.asset_dir, asset.logical_path)
         print "Copying content asset: [#{asset.pathname}] .. "
         $stdout.flush
 
@@ -67,7 +68,7 @@ class Index < Sprockets::Index
         FileUtils.cp asset.pathname.to_s, dest
 
         asset.extend PreparerMD::AssetPatch
-        asset.asset_cdn_url = dest
+        asset.asset_render_url = "__deconst-asset:#{URI.escape asset.logical_path, '%_'}__"
 
         puts "ok"
       end
@@ -83,7 +84,7 @@ class Environment < Jekyll::AssetsPlugin::Environment
   end
 end
 
-# Monkey-patch the Jekyll Assets plugin AssetPath class to use the #asset_cdn_url
+# Monkey-patch the Jekyll Assets plugin AssetPath class to use the #asset_render_url
 #
 module Jekyll
   module AssetsPlugin
@@ -91,7 +92,7 @@ module Jekyll
     class AssetPath
       alias_method :orig_to_s, :to_s
       def to_s
-        @asset.respond_to?(:asset_cdn_url) ? @asset.asset_cdn_url : orig_to_s
+        @asset.respond_to?(:asset_render_url) ? @asset.asset_render_url : orig_to_s
       end
     end
 

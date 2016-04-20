@@ -27,7 +27,7 @@ module PreparerMD
     else
       source ||= Dir.pwd
     end
-    destination ||= File.join(source, '_site')
+    destination ||= @config.envelope_dir
 
     config_path = File.join(source, "_deconst.json")
     if File.exist?(config_path)
