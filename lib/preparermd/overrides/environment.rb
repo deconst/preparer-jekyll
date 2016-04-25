@@ -68,7 +68,7 @@ class Index < Sprockets::Index
         FileUtils.cp asset.pathname.to_s, dest
 
         asset.extend PreparerMD::AssetPatch
-        asset.asset_render_url = "__deconst-asset:#{URI.escape asset.logical_path, '%_'}__"
+        asset.asset_render_url = "__deconst-asset:#{URI.escape asset.logical_path, '%_&"<>'}__"
 
         puts "ok"
       end
