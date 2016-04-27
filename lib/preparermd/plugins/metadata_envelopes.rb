@@ -10,18 +10,6 @@ module PreparerMD
   class JSONGenerator < Jekyll::Generator
 
     def generate(site)
-      if PreparerMD.config.should_submit?
-        opts = {url: PreparerMD.config.content_store_url}
-        opts[:ssl] = {verify: false} if !PreparerMD.config.content_store_tls_verify
-
-        @conn = Faraday.new(opts) do |conn|
-          conn.request :retry, max: 3, methods: [:put]
-          conn.response :raise_error
-
-          conn.adapter Faraday.default_adapter
-        end
-      end
-
       site.collections.each do |label, collection|
         collection.docs.each do |document|
           render_json(document, site)
@@ -188,33 +176,14 @@ module PreparerMD
       content_id = File.join(base, Jekyll::URL.unescape_path(document.url))
       content_id.gsub! %r{/*(index)?(\.html|\.json)?\Z}, ""
 
-      if PreparerMD.config.should_submit?
-        auth = "deconst apikey=\"#{PreparerMD.config.content_store_apikey}\""
+      path = File.join(site.dest, CGI.escape(content_id) + '.json')
 
-        print "Submitting envelope: [#{content_id}] .. "
-        $stdout.flush
+      print "Writing envelope: [#{path}] .. "
+      $stdout.flush
 
-        resp = @conn.put do |req|
-          req.url "/content/#{CGI.escape content_id}"
-          req.headers['Content-Type'] = 'application/json'
-          req.headers['Authorization'] = auth
-          req.body = envelope.to_json
-
-          req.options.timeout = 120
-          req.options.open_timeout = 60
-        end
-
-        puts "ok"
-      else
-        path = File.join(site.dest, CGI.escape(content_id) + '.json')
-
-        print "Writing envelope: [#{path}] .. "
-        $stdout.flush
-
-        FileUtils.mkdir_p(File.dirname(path))
-        File.open(path, 'w') { |f| f.write(envelope.to_json) }
-        puts "ok"
-      end
+      FileUtils.mkdir_p(File.dirname(path))
+      File.open(path, 'w') { |f| f.write(envelope.to_json) }
+      puts "ok"
     end
 
   end
