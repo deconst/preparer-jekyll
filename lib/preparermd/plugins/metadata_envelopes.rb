@@ -10,6 +10,8 @@ module PreparerMD
   class JSONGenerator < Jekyll::Generator
 
     def generate(site)
+      @config = PreparerMD.config
+
       site.collections.each do |label, collection|
         collection.docs.each do |document|
           render_json(document, site)
@@ -132,15 +134,15 @@ module PreparerMD
         }
       end
 
-      meta = PreparerMD.config.meta
+      meta = @config.meta
       meta = meta.merge(document.data.dup)
 
-      if PreparerMD.config.github_url
+      if @config.github_url
         # Hope Github doesn't change this URL
         edit_url_segments = [
-          PreparerMD.config.github_url,
+          @config.github_url,
           "edit",
-          PreparerMD.config.github_branch,
+          @config.github_branch,
           document.relative_path
         ]
 
@@ -166,9 +168,7 @@ module PreparerMD
     end
 
     def render_json(document, site)
-      if PreparerMD.config.jekyll_document != '' and PreparerMD.config.jekyll_document != Jekyll::URL.unescape_path(document.url)
-        return
-      end
+      return if @config.jekyll_document != '' and @config.jekyll_document != Jekyll::URL.unescape_path(document.url)
 
       envelope = envelope_from_document(document, site)
 
@@ -178,12 +178,14 @@ module PreparerMD
 
       path = File.join(site.dest, CGI.escape(content_id) + '.json')
 
-      print "Writing envelope: [#{path}] .. "
-      $stdout.flush
+      if @config.verbose
+        print "Writing envelope: [#{path}] .. "
+        $stdout.flush
+      end
 
       FileUtils.mkdir_p(File.dirname(path))
       File.open(path, 'w') { |f| f.write(envelope.to_json) }
-      puts "ok"
+      puts "ok" if @config.verbose
     end
 
   end

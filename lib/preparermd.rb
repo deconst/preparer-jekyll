@@ -41,7 +41,7 @@ module PreparerMD
       Bundler::CLI::Install.new({}).run
     end
 
-    puts "Building and submitting content."
+    puts "Preparing content."
     Jekyll::Commands::Build.process({source: source, destination: destination})
   end
 

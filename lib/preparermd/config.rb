@@ -5,7 +5,7 @@ module PreparerMD
   # Configuration values and credentials read from the process' environment.
   #
   class Config
-    attr_reader :content_root, :envelope_dir, :asset_dir
+    attr_reader :content_root, :envelope_dir, :asset_dir, :verbose
     attr_reader :content_id_base, :jekyll_document, :github_url, :github_branch, :meta
 
 
@@ -15,6 +15,7 @@ module PreparerMD
       @content_root = ENV.fetch('CONTENT_ROOT', '')
       @envelope_dir = ENV.fetch('ENVELOPE_DIR', File.join(Dir.pwd, '_site', 'deconst-envelopes'))
       @asset_dir = ENV.fetch('ASSET_DIR', File.join(Dir.pwd, '_site', 'deconst-assets'))
+      @verbose = ENV.fetch('VERBOSE', '') != ''
 
       @content_id_base = ENV.fetch('CONTENT_ID_BASE', '').gsub(%r{/\Z}, '')
       @jekyll_document = ENV.fetch('JEKYLL_DOCUMENT', '')
@@ -67,12 +68,8 @@ module PreparerMD
           "IDs for content within this repository."
       end
 
-      if reasons.empty?
-        puts "Content will be submitted to the content service."
-
-        @should_submit = true
-      else
-        $stderr.puts "Not submitting content to the content service because:"
+      unless reasons.empty?
+        $stderr.puts "Unable to prepare content because:"
         $stderr.puts
         $stderr.puts reasons.map { |r| " * #{r}\n"}.join
         $stderr.puts

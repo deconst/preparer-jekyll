@@ -19,8 +19,11 @@ class Index < Sprockets::Index
   def build_asset(path, pathname, options)
     super.tap do |asset|
       dest = File.join(PreparerMD.config.asset_dir, asset.logical_path)
-      print "Copying content asset: [#{asset.pathname}] .. "
-      $stdout.flush
+
+      if PreparerMD.config.verbose
+        print "Copying content asset: [#{asset.pathname}] .. "
+        $stdout.flush
+      end
 
       FileUtils.mkdir_p File.dirname(dest)
       FileUtils.cp asset.pathname.to_s, dest
@@ -28,7 +31,7 @@ class Index < Sprockets::Index
       asset.extend PreparerMD::AssetPatch
       asset.asset_render_url = "__deconst-asset:#{URI.escape asset.logical_path, '%_&"<>'}__"
 
-      puts "ok"
+      puts "ok" if PreparerMD.config.verbose
     end
   end
 end
