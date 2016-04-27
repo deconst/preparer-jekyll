@@ -1,5 +1,6 @@
 require 'json'
 require 'uri'
+require 'pathname'
 
 require 'faraday'
 require 'sprockets'
@@ -28,8 +29,10 @@ class Index < Sprockets::Index
       FileUtils.mkdir_p File.dirname(dest)
       FileUtils.cp asset.pathname.to_s, dest
 
+      local_path = Pathname.new(asset.logical_path).cleanpath.to_s
+
       asset.extend PreparerMD::AssetPatch
-      asset.asset_render_url = "__deconst-asset:#{URI.escape asset.logical_path, '%_&"<>'}__"
+      asset.asset_render_url = "__deconst-asset:#{URI.escape local_path, '%_&"<>'}__"
 
       puts "ok" if PreparerMD.config.verbose
     end
