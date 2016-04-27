@@ -16,62 +16,19 @@ end
 # Custom Index subclass that uploads each built asset to the content service as it is discovered.
 #
 class Index < Sprockets::Index
-  def initialize(*args)
-    super
-
-    opts = {url: PreparerMD.config.content_store_url}
-    opts[:ssl] = {verify: false} if !PreparerMD.config.content_store_tls_verify
-    @conn = Faraday.new(opts) do |conn|
-      conn.request :retry, max: 3, methods: [:post]
-      conn.request :multipart
-      conn.response :raise_error
-
-      conn.adapter Faraday.default_adapter
-    end
-  end
-
   def build_asset(path, pathname, options)
-    auth = "deconst apikey=\"#{PreparerMD.config.content_store_apikey}\""
+    super.tap do |asset|
+      dest = File.join(PreparerMD.config.asset_dir, asset.logical_path)
+      print "Copying content asset: [#{asset.pathname}] .. "
+      $stdout.flush
 
-    if PreparerMD.config.should_submit?
-      super.tap do |asset|
-        asset.pathname.open do |f|
-          print "Submitting content asset: [#{asset.logical_path}] .. "
-          $stdout.flush
+      FileUtils.mkdir_p File.dirname(dest)
+      FileUtils.cp asset.pathname.to_s, dest
 
-          response = @conn.post do |req|
-            req.url '/assets'
-            req.headers['Authorization'] = auth
-            req.body = {
-              asset.logical_path => Faraday::UploadIO.new(f, asset.content_type, asset.logical_path)
-            }
+      asset.extend PreparerMD::AssetPatch
+      asset.asset_render_url = "__deconst-asset:#{URI.escape asset.logical_path, '%_&"<>'}__"
 
-            req.options.timeout = 120
-            req.options.open_timeout = 60
-          end
-
-          asset_url = JSON.parse(response.body)[File.basename asset.logical_path]
-
-          asset.extend PreparerMD::AssetPatch
-          asset.asset_render_url = asset_url
-
-          puts "ok"
-        end
-      end
-    else
-      super.tap do |asset|
-        dest = File.join(PreparerMD.config.asset_dir, asset.logical_path)
-        print "Copying content asset: [#{asset.pathname}] .. "
-        $stdout.flush
-
-        FileUtils.mkdir_p File.dirname(dest)
-        FileUtils.cp asset.pathname.to_s, dest
-
-        asset.extend PreparerMD::AssetPatch
-        asset.asset_render_url = "__deconst-asset:#{URI.escape asset.logical_path, '%_&"<>'}__"
-
-        puts "ok"
-      end
+      puts "ok"
     end
   end
 end

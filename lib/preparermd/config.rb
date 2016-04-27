@@ -8,9 +8,6 @@ module PreparerMD
     attr_reader :content_root, :envelope_dir, :asset_dir
     attr_reader :content_id_base, :jekyll_document, :github_url, :github_branch, :meta
 
-    # To deprecate
-    attr_reader :content_store_url, :content_store_apikey, :content_store_tls_verify
-
 
     # Create a new configuration populated with values from the environment.
     #
@@ -18,11 +15,6 @@ module PreparerMD
       @content_root = ENV.fetch('CONTENT_ROOT', '')
       @envelope_dir = ENV.fetch('ENVELOPE_DIR', File.join(Dir.pwd, '_site', 'deconst-envelopes'))
       @asset_dir = ENV.fetch('ASSET_DIR', File.join(Dir.pwd, '_site', 'deconst-assets'))
-
-      # To deprecate
-      @content_store_url = ENV.fetch('CONTENT_STORE_URL', '').gsub(%r{/\Z}, '')
-      @content_store_apikey = ENV.fetch('CONTENT_STORE_APIKEY', '')
-      @content_store_tls_verify = ENV.fetch('CONTENT_STORE_TLS_VERIFY', '') != 'false'
 
       @content_id_base = ENV.fetch('CONTENT_ID_BASE', '').gsub(%r{/\Z}, '')
       @jekyll_document = ENV.fetch('JEKYLL_DOCUMENT', '')
@@ -65,35 +57,14 @@ module PreparerMD
       end
     end
 
-    # Determine and report (to stderr) whether or not we have enough information to submit to the
-    # content service.
+    # Determine and report (to stderr) whether or not we have enough information to prepare.
     #
     def validate
       reasons = []
 
-      if @content_store_url.empty?
-        reasons << "CONTENT_STORE_URL is missing. It should be the base URL of the content " \
-          "storage service."
-      end
-
-      if @content_store_apikey.empty?
-        reasons << "CONTENT_STORE_APIKEY is missing. It should be a valid API key issued by the " \
-          "content service."
-      end
-
       if @content_id_base.empty?
         reasons << "CONTENT_ID_BASE is missing. It should be the common prefix used to generate " \
           "IDs for content within this repository."
-      end
-
-      if ENV['TRAVIS_PULL_REQUEST'] != "false"
-        reasons << "This looks like a pull request build on Travis."
-      end
-
-      unless @content_store_tls_verify
-        $stderr.puts
-        $stderr.puts "TLS certificate verification disabled!"
-        $stderr.puts
       end
 
       if reasons.empty?
@@ -108,14 +79,6 @@ module PreparerMD
 
         @should_submit = false
       end
-    end
-
-    # Determine whether or not we have enough information to submit to the content service.
-    #
-    def should_submit?
-      raise "#validate must be called first!" if @should_submit.nil?
-
-      @should_submit
     end
   end
 
