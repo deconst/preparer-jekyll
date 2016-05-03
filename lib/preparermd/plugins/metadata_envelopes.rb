@@ -174,7 +174,7 @@ module PreparerMD
 
       base = PreparerMD.config.content_id_base
       content_id = File.join(base, Jekyll::URL.unescape_path(document.url))
-      content_id.gsub! %r{/*(index)?(\.html|\.json)?\Z}, ""
+      content_id.gsub! %r{/*(index)?(\.html)?\Z}, ""
 
       path = File.join(site.dest, CGI.escape(content_id) + '.json')
 
