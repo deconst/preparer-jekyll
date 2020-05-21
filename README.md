@@ -1,4 +1,6 @@
-# Deconst Jekyll Preparer
+# DEPRECATED. Use https://gitlab.com/deconst-next/preparer-jekyll
+
+## Deconst Jekyll Preparer
 
 .md :point_right: .json :point_right: :wrench: :point_right: content service
 
